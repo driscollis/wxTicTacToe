@@ -22,22 +22,43 @@ class TTTPanel(wx.Panel):
         Create and layout the widgets
         """
         mainSizer = wx.BoxSizer(wx.VERTICAL)
-        fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
-        
+        self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
+                
         widgets = []
         size = (100,100)
         for item in range(9):
             name = "toggle%s" % (item+1)
             button = buttons.GenToggleButton(self, size=size, name=name)
+            button.Bind(wx.EVT_BUTTON, self.onToggle)
             widgets.append(button)
             
-        fgSizer.AddMany(widgets)
-        mainSizer.Add(fgSizer, 0, wx.ALL|wx.CENTER, 5)
+        self.fgSizer.AddMany(widgets)
+        mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
         endTurnBtn = wx.Button(self, label="End Turn")
         mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
         
         self.SetSizer(mainSizer)
+        
+    #----------------------------------------------------------------------
+    def onToggle(self, event):
+        """
+        On button toggle, change the label of the button pressed
+        and disable the other buttons unless the user changes their mind
+        """
+        button = event.GetEventObject()
+        button.SetLabel("X")
+        button_name = button.GetName()
+        
+        items = self.fgSizer.GetChildren()
+        for item in items:
+            btn = item.GetWindow()
+            if button_name != btn.GetName():
+                btn.Disable()
+            else:
+                btn.SetLabel("")
+            
+        print
     
 ########################################################################
 class TTTFrame(wx.Frame):
