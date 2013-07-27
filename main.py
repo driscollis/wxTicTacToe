@@ -27,15 +27,24 @@ class TTTPanel(wx.Panel):
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
                 
-        self.widgets = []
+        
         size = (100,100)
-        for item in range(9):
-            name = "toggle%s" % (item+1)
-            button = buttons.GenToggleButton(self, size=size, name=name)
+        self.button1 = buttons.GenToggleButton(self, size=size)
+        self.button2 = buttons.GenToggleButton(self, size=size)
+        self.button3 = buttons.GenToggleButton(self, size=size)
+        self.button4 = buttons.GenToggleButton(self, size=size)
+        self.button5 = buttons.GenToggleButton(self, size=size)
+        self.button6 = buttons.GenToggleButton(self, size=size)
+        self.button7 = buttons.GenToggleButton(self, size=size)
+        self.button8 = buttons.GenToggleButton(self, size=size)
+        self.button9 = buttons.GenToggleButton(self, size=size)
+        self.widgets = [self.button1, self.button2, self.button3,
+                        self.button4, self.button5, self.button6, 
+                        self.button7, self.button8, self.button9]
+        for button in self.widgets:
             button.SetFont(font)
-            button.Bind(wx.EVT_BUTTON, self.onToggle)
-            self.widgets.append(button)
-            
+            button.Bind(wx.EVT_BUTTON, self.onToggle)            
+                    
         self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
@@ -51,12 +60,16 @@ class TTTPanel(wx.Panel):
         """
         for button in self.widgets:
             if button.GetLabel() == "":
-                print "enabling " + button.GetName()
                 button.Enable()
         self.Refresh()
         self.Layout()
         
-        
+    #----------------------------------------------------------------------
+    def onEndTurn(self, event):
+        """
+        """
+        pass
+                
     #----------------------------------------------------------------------
     def onToggle(self, event):
         """
@@ -65,13 +78,13 @@ class TTTPanel(wx.Panel):
         """
         button = event.GetEventObject()
         button.SetLabel("X")
-        button_name = button.GetName()
-        print "you pressed " + button_name
+        button_id = button.GetId()
+        #print "you pressed " + button_name
 
         if not self.toggled:
             self.toggled = True
             for btn in self.widgets:
-                if button_name != btn.GetName():
+                if button_id != btn.GetId():
                     btn.Disable()
         else:
             self.toggled = False
