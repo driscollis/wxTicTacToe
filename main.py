@@ -13,6 +13,7 @@ class TTTPanel(wx.Panel):
         Initialize the panel
         """
         wx.Panel.__init__(self, parent)
+        self.toggled = False
         
         self.layoutWidgets()
         
@@ -26,22 +27,35 @@ class TTTPanel(wx.Panel):
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
                 
-        widgets = []
+        self.widgets = []
         size = (100,100)
         for item in range(9):
             name = "toggle%s" % (item+1)
             button = buttons.GenToggleButton(self, size=size, name=name)
             button.SetFont(font)
             button.Bind(wx.EVT_BUTTON, self.onToggle)
-            widgets.append(button)
+            self.widgets.append(button)
             
-        self.fgSizer.AddMany(widgets)
+        self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
         endTurnBtn = wx.Button(self, label="End Turn")
         mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
         
         self.SetSizer(mainSizer)
+        
+    #----------------------------------------------------------------------
+    def enableUnusedButtons(self):
+        """
+        Re-enable unused buttons
+        """
+        for button in self.widgets:
+            if button.GetLabel() == "":
+                print "enabling " + button.GetName()
+                button.Enable()
+        self.Refresh()
+        self.Layout()
+        
         
     #----------------------------------------------------------------------
     def onToggle(self, event):
@@ -52,17 +66,18 @@ class TTTPanel(wx.Panel):
         button = event.GetEventObject()
         button.SetLabel("X")
         button_name = button.GetName()
-        
-        items = self.fgSizer.GetChildren()
-        for item in items:
-            btn = item.GetWindow()
-            if button_name != btn.GetName():
-                btn.Disable()
-            elif button_name == btn.GetName() and not btn.GetValue():
-                btn.SetLabel("")
+        print "you pressed " + button_name
+
+        if not self.toggled:
+            self.toggled = True
+            for btn in self.widgets:
+                if button_name != btn.GetName():
+                    btn.Disable()
+        else:
+            self.toggled = False
+            button.SetLabel("")
+            self.enableUnusedButtons()
             
-        print
-    
 ########################################################################
 class TTTFrame(wx.Frame):
     """
