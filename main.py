@@ -18,6 +18,27 @@ class TTTPanel(wx.Panel):
         self.layoutWidgets()
         
     #----------------------------------------------------------------------
+    def checkWin(self):
+        """
+        Check if the player won
+        """
+        methodsToWin = [(self.button1.GetLabel(), self.button2.GetLabel(), self.button3.GetLabel()),
+                        (self.button4.GetLabel(), self.button5.GetLabel(), self.button6.GetLabel()),
+                        (self.button7.GetLabel(), self.button8.GetLabel(), self.button9.GetLabel()),
+                        # vertical ways to win
+                        (self.button1.GetLabel(), self.button4.GetLabel(), self.button7.GetLabel()),
+                        (self.button2.GetLabel(), self.button5.GetLabel(), self.button8.GetLabel()),
+                        (self.button3.GetLabel(), self.button6.GetLabel(), self.button9.GetLabel()),
+                        # diagonal ways to win
+                        (self.button1.GetLabel(), self.button5.GetLabel(), self.button9.GetLabel()),
+                        (self.button3.GetLabel(), self.button5.GetLabel(), self.button7.GetLabel())]
+        
+        for value1, value2, value3 in methodsToWin:
+            if value1 == value2 and value2 == value3 and value1 != "":
+                print "Player wins!"
+                return True
+        
+    #----------------------------------------------------------------------
     def layoutWidgets(self):
         """
         Create and layout the widgets
@@ -26,7 +47,6 @@ class TTTPanel(wx.Panel):
         self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
-                
         
         size = (100,100)
         self.button1 = buttons.GenToggleButton(self, size=size)
@@ -41,6 +61,7 @@ class TTTPanel(wx.Panel):
         self.widgets = [self.button1, self.button2, self.button3,
                         self.button4, self.button5, self.button6, 
                         self.button7, self.button8, self.button9]
+        
         for button in self.widgets:
             button.SetFont(font)
             button.Bind(wx.EVT_BUTTON, self.onToggle)            
@@ -49,6 +70,7 @@ class TTTPanel(wx.Panel):
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
         endTurnBtn = wx.Button(self, label="End Turn")
+        endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
         mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
         
         self.SetSizer(mainSizer)
@@ -67,8 +89,48 @@ class TTTPanel(wx.Panel):
     #----------------------------------------------------------------------
     def onEndTurn(self, event):
         """
+        Let the computer play
         """
-        pass
+        # rest toggled flag state
+        self.toggled = False
+        
+        # disable all played buttons
+        for btn in self.widgets:
+            if btn.GetLabel():
+                btn.Disable()
+                
+        methodsToWin = [(self.button1, self.button2, self.button3),
+                        (self.button4, self.button5, self.button6),
+                        (self.button7, self.button8, self.button9),
+                        # vertical ways to win
+                        (self.button1, self.button4, self.button7),
+                        (self.button2, self.button5, self.button8),
+                        (self.button3, self.button6, self.button9),
+                        # diagonal ways to win
+                        (self.button1, self.button5, self.button9),
+                        (self.button3, self.button5, self.button7)]
+        
+        computerPlays = []
+        
+        for button1, button2, button3 in methodsToWin:
+            if button1.GetLabel() == button2.GetLabel() and button1.GetLabel() != "":
+                continue
+            elif button1.GetLabel() == button3.GetLabel() and button1.GetLabel() != "":
+                continue
+            if button1.GetLabel() == "":
+                computerPlays.append(button1)
+                break
+            if button2.GetLabel() == "":
+                computerPlays.append(button2)
+                break
+            if button3.GetLabel() == "":
+                computerPlays.append(button3)
+                break
+                
+        computerPlays[0].SetLabel("O")
+        computerPlays[0].Disable()
+        
+        self.enableUnusedButtons()
                 
     #----------------------------------------------------------------------
     def onToggle(self, event):
@@ -79,8 +141,8 @@ class TTTPanel(wx.Panel):
         button = event.GetEventObject()
         button.SetLabel("X")
         button_id = button.GetId()
-        #print "you pressed " + button_name
-
+        
+        self.checkWin()
         if not self.toggled:
             self.toggled = True
             for btn in self.widgets:
