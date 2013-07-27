@@ -23,12 +23,15 @@ class TTTPanel(wx.Panel):
         """
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
+        font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                       wx.FONTWEIGHT_BOLD)
                 
         widgets = []
         size = (100,100)
         for item in range(9):
             name = "toggle%s" % (item+1)
             button = buttons.GenToggleButton(self, size=size, name=name)
+            button.SetFont(font)
             button.Bind(wx.EVT_BUTTON, self.onToggle)
             widgets.append(button)
             
@@ -55,7 +58,7 @@ class TTTPanel(wx.Panel):
             btn = item.GetWindow()
             if button_name != btn.GetName():
                 btn.Disable()
-            else:
+            elif button_name == btn.GetName() and not btn.GetValue():
                 btn.SetLabel("")
             
         print
