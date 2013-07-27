@@ -1,4 +1,5 @@
 import wx
+import wx.lib.buttons as buttons
 
 ########################################################################
 class TTTPanel(wx.Panel):
@@ -13,6 +14,30 @@ class TTTPanel(wx.Panel):
         """
         wx.Panel.__init__(self, parent)
         
+        self.layoutWidgets()
+        
+    #----------------------------------------------------------------------
+    def layoutWidgets(self):
+        """
+        Create and layout the widgets
+        """
+        mainSizer = wx.BoxSizer(wx.VERTICAL)
+        fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
+        
+        widgets = []
+        size = (100,100)
+        for item in range(9):
+            name = "toggle%s" % (item+1)
+            button = buttons.GenToggleButton(self, size=size, name=name)
+            widgets.append(button)
+            
+        fgSizer.AddMany(widgets)
+        mainSizer.Add(fgSizer, 0, wx.ALL|wx.CENTER, 5)
+        
+        endTurnBtn = wx.Button(self, label="End Turn")
+        mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
+        
+        self.SetSizer(mainSizer)
     
 ########################################################################
 class TTTFrame(wx.Frame):
