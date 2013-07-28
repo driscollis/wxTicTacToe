@@ -59,14 +59,18 @@ class TTTPanel(wx.Panel):
         self.button7 = buttons.GenToggleButton(self, size=size)
         self.button8 = buttons.GenToggleButton(self, size=size)
         self.button9 = buttons.GenToggleButton(self, size=size)
+        self.normalBtnColour = self.button1.GetBackgroundColour()
+        
         self.widgets = [self.button1, self.button2, self.button3,
                         self.button4, self.button5, self.button6, 
                         self.button7, self.button8, self.button9]
         
+        # change all the main game buttons' font and bind them to an event
         for button in self.widgets:
             button.SetFont(font)
             button.Bind(wx.EVT_BUTTON, self.onToggle)            
                     
+        # add the widgets to the sizers
         self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
@@ -141,8 +145,14 @@ class TTTPanel(wx.Panel):
     #----------------------------------------------------------------------
     def onRestart(self, event):
         """
+        Clear and re-enable all the buttons 
         """
-        pass
+        for button in self.widgets:
+            button.SetLabel("")
+            button.SetValue(False)
+            button.SetBackgroundColour(self.normalBtnColour)
+        self.toggled = False
+        self.enableUnusedButtons()
                 
     #----------------------------------------------------------------------
     def onToggle(self, event):
