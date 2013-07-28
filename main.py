@@ -15,6 +15,8 @@ class TTTPanel(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.toggled = False
         
+             
+        
         self.layoutWidgets()
         
     #----------------------------------------------------------------------
@@ -22,20 +24,16 @@ class TTTPanel(wx.Panel):
         """
         Check if the player won
         """
-        methodsToWin = [(self.button1.GetLabel(), self.button2.GetLabel(), self.button3.GetLabel()),
-                        (self.button4.GetLabel(), self.button5.GetLabel(), self.button6.GetLabel()),
-                        (self.button7.GetLabel(), self.button8.GetLabel(), self.button9.GetLabel()),
-                        # vertical ways to win
-                        (self.button1.GetLabel(), self.button4.GetLabel(), self.button7.GetLabel()),
-                        (self.button2.GetLabel(), self.button5.GetLabel(), self.button8.GetLabel()),
-                        (self.button3.GetLabel(), self.button6.GetLabel(), self.button9.GetLabel()),
-                        # diagonal ways to win
-                        (self.button1.GetLabel(), self.button5.GetLabel(), self.button9.GetLabel()),
-                        (self.button3.GetLabel(), self.button5.GetLabel(), self.button7.GetLabel())]
         
-        for value1, value2, value3 in methodsToWin:
-            if value1 == value2 and value2 == value3 and value1 != "":
+        for button1, button2, button3 in self.methodsToWin:
+            if button1.GetLabel() == button2.GetLabel() and \
+               button2.GetLabel() == button3.GetLabel() and \
+               button1.GetLabel() != "":
                 print "Player wins!"
+                button1.SetBackgroundColour("Red")
+                button2.SetBackgroundColour("Red")
+                button3.SetBackgroundColour("Red")
+                self.Layout()
                 return True
         
     #----------------------------------------------------------------------
@@ -73,6 +71,17 @@ class TTTPanel(wx.Panel):
         endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
         mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
         
+        self.methodsToWin = [(self.button1, self.button2, self.button3),
+                             (self.button4, self.button5, self.button6),
+                             (self.button7, self.button8, self.button9),
+                             # vertical ways to win
+                             (self.button1, self.button4, self.button7),
+                             (self.button2, self.button5, self.button8),
+                             (self.button3, self.button6, self.button9),
+                             # diagonal ways to win
+                             (self.button1, self.button5, self.button9),
+                             (self.button3, self.button5, self.button7)]           
+        
         self.SetSizer(mainSizer)
         
     #----------------------------------------------------------------------
@@ -98,21 +107,10 @@ class TTTPanel(wx.Panel):
         for btn in self.widgets:
             if btn.GetLabel():
                 btn.Disable()
-                
-        methodsToWin = [(self.button1, self.button2, self.button3),
-                        (self.button4, self.button5, self.button6),
-                        (self.button7, self.button8, self.button9),
-                        # vertical ways to win
-                        (self.button1, self.button4, self.button7),
-                        (self.button2, self.button5, self.button8),
-                        (self.button3, self.button6, self.button9),
-                        # diagonal ways to win
-                        (self.button1, self.button5, self.button9),
-                        (self.button3, self.button5, self.button7)]
         
         computerPlays = []
         
-        for button1, button2, button3 in methodsToWin:
+        for button1, button2, button3 in self.methodsToWin:
             if button1.GetLabel() == button2.GetLabel() and button1.GetLabel() != "":
                 continue
             elif button1.GetLabel() == button3.GetLabel() and button1.GetLabel() != "":
