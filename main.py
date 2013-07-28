@@ -18,11 +18,10 @@ class TTTPanel(wx.Panel):
         self.layoutWidgets()
         
     #----------------------------------------------------------------------
-    def checkWin(self):
+    def checkWin(self, computer=False):
         """
         Check if the player won
         """
-        
         for button1, button2, button3 in self.methodsToWin:
             if button1.GetLabel() == button2.GetLabel() and \
                button2.GetLabel() == button3.GetLabel() and \
@@ -33,10 +32,13 @@ class TTTPanel(wx.Panel):
                 button3.SetBackgroundColour("Red")
                 self.Layout()
                 
-                msg = "You Won!"
-                dlg = wx.MessageDialog(None, msg, "Winner!", wx.OK | wx.ICON_WARNING)
-                dlg.ShowModal()
-                dlg.Destroy()
+                if not computer:
+                    msg = "You Won!"
+                    dlg = wx.MessageDialog(None, msg, "Winner!", wx.OK | wx.ICON_WARNING)
+                    dlg.ShowModal()
+                    dlg.Destroy()
+                else:
+                    return True
         
     #----------------------------------------------------------------------
     def layoutWidgets(self):
@@ -92,7 +94,7 @@ class TTTPanel(wx.Panel):
                              (self.button3, self.button6, self.button9),
                              # diagonal ways to win
                              (self.button1, self.button5, self.button9),
-                             (self.button3, self.button5, self.button7)]           
+                             (self.button3, self.button5, self.button7)]
         
         self.SetSizer(mainSizer)
         
@@ -121,22 +123,31 @@ class TTTPanel(wx.Panel):
                 btn.Disable()
         
         computerPlays = []
+        noPlays = []
         
         for button1, button2, button3 in self.methodsToWin:
             if button1.GetLabel() == button2.GetLabel() and button1.GetLabel() != "":
+                if button1.GetLabel() == "O":
+                    noPlays.append(button3)
                 continue
             elif button1.GetLabel() == button3.GetLabel() and button1.GetLabel() != "":
+                if button1.GetLabel() == "O":
+                    noPlays.append(button3)
                 continue
-            if button1.GetLabel() == "":
-                computerPlays.append(button1)
-                break
-            if button2.GetLabel() == "":
-                computerPlays.append(button2)
-                break
-            if button3.GetLabel() == "":
-                computerPlays.append(button3)
-                break
-                
+            if button1.GetLabel() == "" and button1 not in noPlays:
+                if not self.checkWin(computer=True):
+                    computerPlays.append(button1)
+                    break
+            if button2.GetLabel() == "" and button2 not in noPlays:
+                if not self.checkWin(computer=True):
+                    computerPlays.append(button2)
+                    break
+            if button3.GetLabel() == "" and button3 not in noPlays:
+                if not self.checkWin(computer=True):
+                    computerPlays.append(button3)
+                    break
+        
+        print self.checkWin()
         computerPlays[0].SetLabel("O")
         computerPlays[0].Disable()
         
