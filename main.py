@@ -15,8 +15,6 @@ class TTTPanel(wx.Panel):
         wx.Panel.__init__(self, parent)
         self.toggled = False
         
-             
-        
         self.layoutWidgets()
         
     #----------------------------------------------------------------------
@@ -47,6 +45,7 @@ class TTTPanel(wx.Panel):
         """
         mainSizer = wx.BoxSizer(wx.VERTICAL)
         self.fgSizer = wx.FlexGridSizer(rows=3, cols=3, vgap=5, hgap=5)
+        btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         font = wx.Font(22, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                        wx.FONTWEIGHT_BOLD)
         
@@ -73,7 +72,12 @@ class TTTPanel(wx.Panel):
         
         endTurnBtn = wx.Button(self, label="End Turn")
         endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
-        mainSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
+        btnSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
+        
+        startOverBtn = wx.Button(self, label="Restart")
+        startOverBtn.Bind(wx.EVT_BUTTON, self.onRestart)
+        btnSizer.Add(startOverBtn, 0, wx.ALL|wx.CENTER, 5)
+        mainSizer.Add(btnSizer, 0, wx.CENTER)
         
         self.methodsToWin = [(self.button1, self.button2, self.button3),
                              (self.button4, self.button5, self.button6),
@@ -133,6 +137,12 @@ class TTTPanel(wx.Panel):
         computerPlays[0].Disable()
         
         self.enableUnusedButtons()
+        
+    #----------------------------------------------------------------------
+    def onRestart(self, event):
+        """
+        """
+        pass
                 
     #----------------------------------------------------------------------
     def onToggle(self, event):
