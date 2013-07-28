@@ -34,7 +34,11 @@ class TTTPanel(wx.Panel):
                 button2.SetBackgroundColour("Red")
                 button3.SetBackgroundColour("Red")
                 self.Layout()
-                return True
+                
+                msg = "You Won!"
+                dlg = wx.MessageDialog(None, msg, "Winner!", wx.OK | wx.ICON_WARNING)
+                dlg.ShowModal()
+                dlg.Destroy()
         
     #----------------------------------------------------------------------
     def layoutWidgets(self):
