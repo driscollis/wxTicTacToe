@@ -55,15 +55,15 @@ class TTTPanel(wx.Panel):
                        wx.FONTWEIGHT_BOLD)
         
         size = (100,100)
-        self.button1 = buttons.GenToggleButton(self, size=size)
-        self.button2 = buttons.GenToggleButton(self, size=size)
-        self.button3 = buttons.GenToggleButton(self, size=size)
-        self.button4 = buttons.GenToggleButton(self, size=size)
-        self.button5 = buttons.GenToggleButton(self, size=size)
-        self.button6 = buttons.GenToggleButton(self, size=size)
-        self.button7 = buttons.GenToggleButton(self, size=size)
-        self.button8 = buttons.GenToggleButton(self, size=size)
-        self.button9 = buttons.GenToggleButton(self, size=size)
+        self.button1 = buttons.GenToggleButton(self, size=size, name="btn1")
+        self.button2 = buttons.GenToggleButton(self, size=size, name="btn2")
+        self.button3 = buttons.GenToggleButton(self, size=size, name="btn3")
+        self.button4 = buttons.GenToggleButton(self, size=size, name="btn4")
+        self.button5 = buttons.GenToggleButton(self, size=size, name="btn5")
+        self.button6 = buttons.GenToggleButton(self, size=size, name="btn6")
+        self.button7 = buttons.GenToggleButton(self, size=size, name="btn7")
+        self.button8 = buttons.GenToggleButton(self, size=size, name="btn8")
+        self.button9 = buttons.GenToggleButton(self, size=size, name="btn9")
         self.normalBtnColour = self.button1.GetBackgroundColour()
         
         self.widgets = [self.button1, self.button2, self.button3,
@@ -135,23 +135,28 @@ class TTTPanel(wx.Panel):
                 continue
             elif button1.GetLabel() == button3.GetLabel() and button1.GetLabel() != "":
                 if button1.GetLabel() == "O":
-                    noPlays.append(button3)
+                    noPlays.append(button2)
                 continue
             if button1.GetLabel() == "" and button1 not in noPlays:
                 if not self.checkWin(computer=True):
                     computerPlays.append(button1)
-                    break
+                    
             if button2.GetLabel() == "" and button2 not in noPlays:
                 if not self.checkWin(computer=True):
                     computerPlays.append(button2)
-                    break
+                    
             if button3.GetLabel() == "" and button3 not in noPlays:
                 if not self.checkWin(computer=True):
                     computerPlays.append(button3)
-                    break
+                    
         
-        computerPlays[0].SetLabel("O")
-        computerPlays[0].Disable()
+        print noPlays
+        for btn in computerPlays:
+            if btn not in noPlays:
+                print btn.GetName()
+                btn.SetLabel("O")
+                btn.Disable()
+                break
         
         self.enableUnusedButtons()
         
