@@ -1,3 +1,4 @@
+import random
 import wx
 import wx.lib.buttons as buttons
 
@@ -35,9 +36,12 @@ class TTTPanel(wx.Panel):
                 self.Layout()
                 
                 if not computer:
-                    msg = "You Won!"
-                    dlg = wx.MessageDialog(None, msg, "Winner!", wx.OK | wx.ICON_WARNING)
-                    dlg.ShowModal()
+                    msg = "You Won! Would you like to play again?"
+                    dlg = wx.MessageDialog(None, msg, "Winner!",
+                                           wx.YES_NO | wx.ICON_WARNING)
+                    result = dlg.ShowModal()
+                    if result == wx.ID_YES:
+                        self.restart()
                     dlg.Destroy()
                     break
                 else:
@@ -151,14 +155,40 @@ class TTTPanel(wx.Panel):
                     
         
         print noPlays
-        for btn in computerPlays:
+        choices = 9
+        while 1 and computerPlays:
+            btn = random.choice(computerPlays)
+            
             if btn not in noPlays:
                 print btn.GetName()
                 btn.SetLabel("O")
                 btn.Disable()
                 break
+            if choices < 1:
+                self.giveUp()
+                break
+            choices -= 1
+        else:
+            # Computer cannot play without winning
+            self.giveUp()
         
         self.enableUnusedButtons()
+        
+    #----------------------------------------------------------------------
+    def giveUp(self):
+        """
+        The computer cannot find a way to play that lets the user win,
+        so it gives up.
+        """
+        msg = "I give up, Dave. You're too good at this game!"
+        dlg = wx.MessageDialog(None, msg, "Game Over!",
+                               wx.YES_NO | wx.ICON_WARNING)
+        result = dlg.ShowModal()
+        if result == wx.ID_YES:
+            self.restart()
+        else:
+            wx.CallAfter(self.GetParent().Close)
+        dlg.Destroy()          
         
     #----------------------------------------------------------------------
     def onRestart(self, event):
