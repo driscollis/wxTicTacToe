@@ -14,6 +14,7 @@ class TTTPanel(wx.Panel):
         """
         wx.Panel.__init__(self, parent)
         self.toggled = False
+        self.playerWon = False
         
         self.layoutWidgets()
         
@@ -27,9 +28,10 @@ class TTTPanel(wx.Panel):
                button2.GetLabel() == button3.GetLabel() and \
                button1.GetLabel() != "":
                 print "Player wins!"
-                button1.SetBackgroundColour("Red")
-                button2.SetBackgroundColour("Red")
-                button3.SetBackgroundColour("Red")
+                self.playerWon = True
+                button1.SetBackgroundColour("Yellow")
+                button2.SetBackgroundColour("Yellow")
+                button3.SetBackgroundColour("Yellow")
                 self.Layout()
                 
                 if not computer:
@@ -37,6 +39,7 @@ class TTTPanel(wx.Panel):
                     dlg = wx.MessageDialog(None, msg, "Winner!", wx.OK | wx.ICON_WARNING)
                     dlg.ShowModal()
                     dlg.Destroy()
+                    break
                 else:
                     return True
         
@@ -147,7 +150,6 @@ class TTTPanel(wx.Panel):
                     computerPlays.append(button3)
                     break
         
-        print self.checkWin()
         computerPlays[0].SetLabel("O")
         computerPlays[0].Disable()
         
@@ -156,14 +158,9 @@ class TTTPanel(wx.Panel):
     #----------------------------------------------------------------------
     def onRestart(self, event):
         """
-        Clear and re-enable all the buttons 
+        Calls the restart method
         """
-        for button in self.widgets:
-            button.SetLabel("")
-            button.SetValue(False)
-            button.SetBackgroundColour(self.normalBtnColour)
-        self.toggled = False
-        self.enableUnusedButtons()
+        self.restart()
                 
     #----------------------------------------------------------------------
     def onToggle(self, event):
@@ -185,6 +182,31 @@ class TTTPanel(wx.Panel):
             self.toggled = False
             button.SetLabel("")
             self.enableUnusedButtons()
+            
+        # check if it's a "cats game" - no one's won
+        if not self.playerWon:
+            labels = [True if btn.GetLabel() else False for btn in self.widgets]
+            if False not in labels:
+                msg = "Cats Game - No one won! Would you like to play again?"
+                dlg = wx.MessageDialog(None, msg, "Game Over!",
+                                       wx.YES_NO | wx.ICON_WARNING)
+                result = dlg.ShowModal()
+                if result == wx.ID_YES:
+                    self.restart()
+                dlg.Destroy()
+                
+    #----------------------------------------------------------------------
+    def restart(self):
+        """
+        Restart the game and reset everything
+        """
+        for button in self.widgets:
+            button.SetLabel("")
+            button.SetValue(False)
+            button.SetBackgroundColour(self.normalBtnColour)
+        self.toggled = False
+        self.playerWon = False
+        self.enableUnusedButtons()        
             
 ########################################################################
 class TTTFrame(wx.Frame):
