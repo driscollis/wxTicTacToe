@@ -41,7 +41,7 @@ class TTTPanel(wx.Panel):
                                            wx.YES_NO | wx.ICON_WARNING)
                     result = dlg.ShowModal()
                     if result == wx.ID_YES:
-                        self.restart()
+                        wx.CallAfter(self.restart)
                     dlg.Destroy()
                     break
                 else:
@@ -133,14 +133,27 @@ class TTTPanel(wx.Panel):
         noPlays = []
         
         for button1, button2, button3 in self.methodsToWin:
-            if button1.GetLabel() == button2.GetLabel() and button1.GetLabel() != "":
-                if button1.GetLabel() == "O":
+            if button1.GetLabel() == button2.GetLabel() and button3.GetLabel() == "":
+                if button1.GetLabel() == "" and button2.GetLabel() == "" and button1.GetLabel() == "":
+                    pass
+                else:
+                    #if button1.GetLabel() == "O":
                     noPlays.append(button3)
-                continue
-            elif button1.GetLabel() == button3.GetLabel() and button1.GetLabel() != "":
-                if button1.GetLabel() == "O":
+                
+            elif button1.GetLabel() == button3.GetLabel() and button2.GetLabel() == "":
+                if button1.GetLabel() == "" and button2.GetLabel() == "" and button1.GetLabel() == "":
+                    pass
+                else:
                     noPlays.append(button2)
-                continue
+                
+            elif button2.GetLabel() == button3.GetLabel() and button1.GetLabel() == "":
+                if button1.GetLabel() == "" and button2.GetLabel() == "" and button1.GetLabel() == "":
+                    pass
+                else:
+                    noPlays.append(button1)
+                    
+            noPlays = list(set(noPlays))
+            
             if button1.GetLabel() == "" and button1 not in noPlays:
                 if not self.checkWin(computer=True):
                     computerPlays.append(button1)
@@ -154,8 +167,9 @@ class TTTPanel(wx.Panel):
                     computerPlays.append(button3)
                     
         
+        computerPlays = list(set(computerPlays))
         print noPlays
-        choices = 9
+        choices = len(computerPlays)
         while 1 and computerPlays:
             btn = random.choice(computerPlays)
             
@@ -164,6 +178,9 @@ class TTTPanel(wx.Panel):
                 btn.SetLabel("O")
                 btn.Disable()
                 break
+            else:
+                print "Removed => " + btn.GetName()
+                computerPlays.remove(btn)
             if choices < 1:
                 self.giveUp()
                 break
