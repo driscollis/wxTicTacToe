@@ -262,6 +262,7 @@ class TTTPanel(wx.Panel):
             button.SetBackgroundColour(self.normalBtnColour)
         self.toggled = False
         self.playerWon = False
+        self.endTurnBtn.Disable()
         self.enableUnusedButtons()        
             
 ########################################################################
