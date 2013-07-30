@@ -83,9 +83,10 @@ class TTTPanel(wx.Panel):
         self.fgSizer.AddMany(self.widgets)
         mainSizer.Add(self.fgSizer, 0, wx.ALL|wx.CENTER, 5)
         
-        endTurnBtn = wx.Button(self, label="End Turn")
-        endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
-        btnSizer.Add(endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
+        self.endTurnBtn = wx.Button(self, label="End Turn")
+        self.endTurnBtn.Bind(wx.EVT_BUTTON, self.onEndTurn)
+        self.endTurnBtn.Disable()
+        btnSizer.Add(self.endTurnBtn, 0, wx.ALL|wx.CENTER, 5)
         
         startOverBtn = wx.Button(self, label="Restart")
         startOverBtn.Bind(wx.EVT_BUTTON, self.onRestart)
@@ -189,6 +190,7 @@ class TTTPanel(wx.Panel):
             # Computer cannot play without winning
             self.giveUp()
         
+        self.endTurnBtn.Disable()
         self.enableUnusedButtons()
         
     #----------------------------------------------------------------------
@@ -227,11 +229,13 @@ class TTTPanel(wx.Panel):
         self.checkWin()
         if not self.toggled:
             self.toggled = True
+            self.endTurnBtn.Enable()
             for btn in self.widgets:
                 if button_id != btn.GetId():
                     btn.Disable()
         else:
             self.toggled = False
+            self.endTurnBtn.Disable()
             button.SetLabel("")
             self.enableUnusedButtons()
             
